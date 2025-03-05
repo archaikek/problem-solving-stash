@@ -68,6 +68,21 @@ void readULL(long long int *l)
 	}
 	*l = r;
 }
+void readS(char *s)
+{
+	register int index = 0;
+	register char c = getchar();
+	
+	while (c < '!' || c > 'z')
+	{
+		c = getchar();
+	}
+	while (c >= '!' && c <= 'z')
+	{
+		s[index++] = c;
+		c = getchar();
+	}
+}
 void write(long long int l)
 {
 	if (!l) putchar('0');
@@ -81,7 +96,7 @@ void write(long long int l)
 		int index = 0, digits[21];
 		while (l)
 		{
-			digits[index++] = l % 10 + '0';
+			digits[++index] = l % 10 + '0';
 			l /= 10;
 		}
 		for (int i = index + 1; --i;)

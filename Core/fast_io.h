@@ -15,5 +15,6 @@ void readI(int *i);
 void readUI(int *i);
 void readLL(long long int *l);
 void readULL(long long int *l);
+void readS(char *s);
 void write(long long int l);
 void writeS(const char *s);
