@@ -1,6 +1,6 @@
 #include "fast_io.h"
 
-inline void readI(int *i)
+void readI(int *i)
 {
 	register int r = 0;
 	register char c = getchar();
@@ -18,7 +18,7 @@ inline void readI(int *i)
 	}
 	*i = r * z;
 }
-inline void readUI(int *i)
+void readUI(int *i)
 {
 	register int r = 0;
 	register char c = getchar();
@@ -34,7 +34,7 @@ inline void readUI(int *i)
 	}
 	*i = r;
 }
-inline void readLL(long long int *l)
+void readLL(long long int *l)
 {
 	register long long int r = 0;
 	register char c = getchar();
@@ -52,7 +52,7 @@ inline void readLL(long long int *l)
 	}
 	*l = r * z;
 }
-inline void readULL(long long int *l)
+void readULL(long long int *l)
 {
 	register long long int r = 0;
 	register char c = getchar();
@@ -68,7 +68,7 @@ inline void readULL(long long int *l)
 	}
 	*l = r;
 }
-inline void write(long long int l)
+void write(long long int l)
 {
 	if (!l) putchar('0');
 	else
@@ -90,7 +90,7 @@ inline void write(long long int l)
 		}
 	}
 }
-inline void writeS(const char *s)
+void writeS(const char *s)
 {
 	const char *end = s;
 	while (*end != '\0')
