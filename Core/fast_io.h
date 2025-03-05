@@ -6,6 +6,9 @@
 	#ifdef UNSAFE_IO
 		#define _getchar getchar_unlocked
 		#define _putchar putchar_unlocked
+	#else
+		#define _getchar getchar
+		#define _putchar putchar
 	#endif
 #else
 	#include <cstdio>

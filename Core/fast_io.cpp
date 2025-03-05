@@ -82,6 +82,7 @@ void readS(char *s)
 		s[index++] = c;
 		c = getchar();
 	}
+	s[index] = '\0';
 }
 void write(long long int l)
 {
