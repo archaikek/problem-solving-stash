@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdio>
 
 #define UNSAFE_IO // comment this out if your program needs thread-safe IO
 #ifdef __unix__
@@ -11,7 +12,6 @@
 		#define _putchar putchar
 	#endif
 #else
-	#include <cstdio>
 	#define _getchar getchar
 	#define _putchar putchar
 #endif
