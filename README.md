@@ -5,3 +5,5 @@ Different branches contain solutions for different problems, which will be linke
 
 ## spoj-ms2025-shpath
 Solution of the problem 'The Shortest Path' from https://www.spoj.com/MS2025/problems/SHPATH/. The contest will most likely be unavailable to outsiders.
+### Solution
+Store city names in a <string, int> map to easily convert them to indices, use Dijkstra's algorithm to find the shortest paths.
