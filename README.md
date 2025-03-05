@@ -3,5 +3,5 @@ Repository for codes for competitive programming problem solving and similar.
 
 Different branches contain solutions for different problems, which will be linked in their respective readmes. 
 
-## master
-This branch contains common functions and macros for competitive programming.
+## spoj-ms2025-shpath
+Solution of the problem 'The Shortest Path' from https://www.spoj.com/MS2025/problems/SHPATH/. The contest will most likely be unavailable to outsiders.
