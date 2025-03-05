@@ -105,6 +105,7 @@ inline void readS(char *s)
 		s[index++] = c;
 		c = getchar();
 	}
+	s[index] = '\0';
 }
 inline void write(long long int l)
 {
@@ -138,9 +139,58 @@ inline void writeS(const char *s)
 	}
 }
 
+#include <vector>
+#include <map>
+#include <queue>
+#include <cstring>
+
+#define MAX_NAME_LENGTH 10
+#define MAX_NODE_COUNT 10000
+
+using namespace std;
+
+typedef struct name_t
+{
+	char name[MAX_NAME_LENGTH];
+};
+bool operator<(const name_t &a, const name_t &b)
+{
+	return strcmp(a.name, b.name) < 0;
+}
+
+int s, n, p, r;
+int results[MAX_NODE_COUNT + 1], visited[MAX_NODE_COUNT + 1], run_count;
+name_t name, name2;
+vector<pair<int, int>> nodes[MAX_NODE_COUNT + 1];
+pair<int, int> temp;
+map<name_t, int> cities;
+
+void clear_vector(vector<pair<int, int>> &v)
+{
+	vector<pair<int, int>> empty;
+	swap(empty, v);
+}
+void clear_nodes(const int node_count)
+{
+	for (int i = 1; i <= n; ++i)
+	{
+		clear_vector(nodes[i]);
+	}
+}
+void clear_map(map<name_t, int> &m)
+{
+	map<name_t, int> empty;
+	swap(m, empty);
+}
 
 int main()
 {
-
+	readUI(&s);
+	while (s--)
+	{
+		readUI(&n);
+		clear_map(cities);
+		clear_nodes(n);
+	}
 	return 0;
 }
