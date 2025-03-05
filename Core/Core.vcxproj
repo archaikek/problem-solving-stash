@@ -127,11 +127,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="common_defines.h" />
-    <ClInclude Include="fast_io.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="fast_io.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
