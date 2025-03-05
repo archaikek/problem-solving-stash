@@ -4,11 +4,13 @@
 #ifdef __unix__
 #include<unistd.h>
 	#ifdef UNSAFE_IO
-		#define getchar getchar_unlocked
-		#define putchar putchar_unlocked
+		#define _getchar getchar_unlocked
+		#define _putchar putchar_unlocked
 	#endif
 #else
 	#include <cstdio>
+	#define _getchar getchar
+	#define _putchar putchar
 #endif
 
 void readI(int *i);
