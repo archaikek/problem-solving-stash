@@ -6,3 +6,4 @@ Different branches contain solutions for different problems, which will be linke
 ## spoj-ms2025-tdbfs
 Solution of the problem 'Searching the Graph' from https://www.spoj.com/MS2025/problems/TDBFS/. The contest will most likely be unavailable to outsiders.
 ### Solution
+Pretty self explanatory, use DFS and BFS when requested.
