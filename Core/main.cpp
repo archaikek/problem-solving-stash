@@ -17,6 +17,7 @@
 #endif
 
 #include <vector>
+#include <cstdlib>
 
 #define ff first
 #define ss second
@@ -148,9 +149,18 @@ inline void writeS(const char *s)
 	}
 }
 
-int n, m;
-vector<pair<int, int>> nodes[MAX_NODE_COUNT + 1];
-pair<int, int> edges[MAX_EDGE_COUNT];
+typedef struct edge_t
+{
+	int src, dst, cost;
+};
+bool operator<(const edge_t &a, const edge_t &b)
+{
+	return a.cost < b.cost;
+}
+
+int n, m, src, dst, cost;
+vector<int> nodes[MAX_NODE_COUNT + 1];
+edge_t edges[MAX_EDGE_COUNT];
 LL result;
 
 int rep[MAX_NODE_COUNT + 1], rep_size[MAX_NODE_COUNT + 1];
@@ -161,9 +171,9 @@ int find(const int node)
 }
 void onion(int x, int y)
 {
-	int x = find(x);
-	int y = find(y);
-	if (x == y) return x;
+	x = find(x);
+	y = find(y);
+	if (x == y) return;
 
 	if (rep_size[x] < rep_size[y])
 	{
@@ -181,10 +191,118 @@ void init_find_and_union(const int node_count)
 	}
 }
 
+void bubblesort(edge_t *tab, const int size, edge_t *buffer)
+{
+	buffer[0] = tab[0];
+	for (int i = 1; i < size; ++i)
+	{
+		for (int j = i; j >= 0; --j)
+		{
+			if (tab[i] < buffer[j - 1])
+			{
+				buffer[j] = buffer[j - 1];
+			}
+			else
+			{
+				buffer[j] = tab[i];
+				break;
+			}
+		}
+	}
+	for (int i = 0; i < size; ++i)
+	{
+		tab[i] = buffer[i];
+	}
+}
+
+void _merge(edge_t *tab, edge_t *mid, int size, edge_t *buffer)
+{
+	const int half = mid - tab;
+	int left = 0, right = 0;
+	for (int i = 0; i < size; ++i)
+	{
+		if ((left < half && tab[left] < mid[right]) || right >= size - half)
+		{
+			buffer[i] = tab[left++];
+		}
+		else
+		{
+			buffer[i] = mid[right++];
+		}
+	}
+	for (int i = 0; i < size; ++i)
+	{
+		tab[i] = buffer[i];
+	}
+}
+
+void _mergesort_hybrid(edge_t *tab, const int size, edge_t *buffer, const int cutoff)
+{
+	if (size <= cutoff)
+	{
+		bubblesort(tab, size, buffer);
+		return;
+	}
+
+	const int half = size / 2;
+	edge_t *mid = tab + half;
+	_mergesort_hybrid(tab, half, buffer, cutoff);
+	_mergesort_hybrid(mid, size - half, buffer, cutoff);
+
+	int left = 0, right = 0;
+	for (int i = 0; i < size; ++i)
+	{
+		if ((left < half && tab[left] < mid[right]) || right >= size - half)
+		{
+			buffer[i] = tab[left++];
+		}
+		else
+		{
+			buffer[i] = mid[right++];
+		}
+	}
+	for (int i = 0; i < size; ++i)
+	{
+		tab[i] = buffer[i];
+	}
+}
+void mergesort_hybrid(edge_t *begin, edge_t *end, const int cutoff)
+{
+	const int size = end - begin;
+	edge_t *buffer = (edge_t *)malloc(size * sizeof(edge_t));
+
+	_mergesort_hybrid(begin, size, buffer, cutoff);
+
+	free(buffer);
+}
+
 int main()
 {
 	readUI(&n);
 	readUI(&m);
+	init_find_and_union(n);
 
+	for (int i = 0; i < m; ++i)
+	{
+		readUI(&src);
+		readUI(&dst);
+		readUI(&cost);
+
+		nodes[src].eb(dst);
+		nodes[dst].eb(src);
+		edges[i] = { src, dst, cost };
+	}
+	mergesort_hybrid(edges, edges + m, 32);
+
+	for (int i = 0; i < m; ++i)
+	{
+		if (find(edges[i].src) != find(edges[i].dst))
+		{
+			result += edges[i].cost;
+			onion(edges[i].src, edges[i].dst);
+		}
+	}
+
+	write(result);
 	return 0;
 }
