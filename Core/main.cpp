@@ -3,7 +3,7 @@
 
 #define UNSAFE_IO // comment this out if your program needs thread-safe IO
 #ifdef __unix__
-#include<unistd.h>
+#include <unistd.h>
 #ifdef UNSAFE_IO
 #define _getchar getchar_unlocked
 #define _putchar putchar_unlocked
@@ -16,10 +16,17 @@
 #define _putchar putchar
 #endif
 
+#include <vector>
+
 #define ff first
 #define ss second
 #define eb emplace_back
 #define debug if(1)
+
+#define MAX_NODE_COUNT 10000
+#define MAX_EDGE_COUNT 100000
+
+using namespace std;
 
 typedef long long int LL;
 typedef long double LD;
@@ -141,9 +148,43 @@ inline void writeS(const char *s)
 	}
 }
 
+int n, m;
+vector<pair<int, int>> nodes[MAX_NODE_COUNT + 1];
+pair<int, int> edges[MAX_EDGE_COUNT];
+LL result;
+
+int rep[MAX_NODE_COUNT + 1], rep_size[MAX_NODE_COUNT + 1];
+int find(const int node)
+{
+	if (node == rep[node]) return node;
+	return rep[node] = find(rep[node]);
+}
+void onion(int x, int y)
+{
+	int x = find(x);
+	int y = find(y);
+	if (x == y) return x;
+
+	if (rep_size[x] < rep_size[y])
+	{
+		swap(x, y);
+	}
+	rep[y] = x;
+	rep_size[x] += rep_size[y];
+}
+void init_find_and_union(const int node_count)
+{
+	for (int i = 1; i <= node_count; ++i)
+	{
+		rep[i] = i;
+		rep_size[i] = 1;
+	}
+}
 
 int main()
 {
+	readUI(&n);
+	readUI(&m);
 
 	return 0;
 }
