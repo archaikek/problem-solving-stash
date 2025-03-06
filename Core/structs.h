@@ -15,3 +15,8 @@ typedef struct
 } result_t;
 bool operator<(const result_t &a, const result_t &b);
 
+std::set<result_t> ***create_results(const int n, const int m);
+void delete_results(std::set<result_t> ***results, const int n, const int m);
+
+char **create_board(const int n, const int m);
+void delete_board(char **board, const int n, const int m);
