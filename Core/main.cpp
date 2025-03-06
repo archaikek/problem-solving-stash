@@ -7,14 +7,17 @@
 int main()
 {
 	int n, m, k, mode;
-	int start_row, start_col;
+	int start_col;
 	scanf("%d%d%d", &k, &n, &m);
 	
-	char **board = (char **)malloc(sizeof(char *) * (n + 1)); // have the tables 1-indexed
-	for (int i = 0; i < n; ++i)
-	{
-		board[i] = (char *)malloc(sizeof(char) * (m + 2));
+	char **board = create_board(n, m);
+	std::set<result_t> ***results = create_results(n, m);
 
+	helper char *start_row = board[1];
+	for (int j = 1; j <= m; ++j)
+	{
+		board[1][j] = getchar();
+		if (board[1][j] == 'S') start_col = j;
 	}
 	return 0;
 }

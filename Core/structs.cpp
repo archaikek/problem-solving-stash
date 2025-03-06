@@ -44,6 +44,7 @@ char **create_board(const int n, const int m)
 	{
 		char *row = board[i] = (char *)malloc(sizeof(char) * (m + 2));
 	}
+	return board;
 }
 void delete_board(char **board, const int n, const int m)
 {
