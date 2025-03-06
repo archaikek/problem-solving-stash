@@ -129,10 +129,12 @@
   <ItemGroup>
     <ClInclude Include="common_defines.h" />
     <ClInclude Include="fast_io.h" />
+    <ClInclude Include="structs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fast_io.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="structs.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
