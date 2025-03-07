@@ -1,4 +1,3 @@
-#include "common_defines.h"
 #include "structs.h"
 
 int ***create_dp(const int k, const int n, const int m)

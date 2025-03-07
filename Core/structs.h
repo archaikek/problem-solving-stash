@@ -1,4 +1,5 @@
 #pragma once
+#include "common_defines.h"
 #include <set>
 
 #define INF (1<<31)
