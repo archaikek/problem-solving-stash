@@ -24,6 +24,8 @@ int main()
 	generate_solution(board, dp, k, n, m);
 	debug print_dp(dp, k, n, m);
 
+	print_board(board, n, m);
+
 	delete_dp(dp, k, n, m);
 	delete_board(board, n, m);
 	return 0;

@@ -138,7 +138,7 @@ void process_wall(char *line, int **prev_wall, int **curr_wall, const int k, con
 	{
 		free(curr_wall_copy[i]);
 	}
-	//free(curr_wall_copy); guh??
+	free(curr_wall_copy);
 }
 void generate_solution(char **board, int ***dp, const int k, const int n, const int m)
 {

@@ -66,3 +66,11 @@ void print_dp(int ***dp, const int k, const int n, const int m)
 		printf("\n");
 	}
 }
+void print_board(char **board, const int n, const int m)
+{
+	for (int i = 1; i <= n; ++i)
+	{
+		writeS(board[i]);
+		_putchar('\n');
+	}
+}
