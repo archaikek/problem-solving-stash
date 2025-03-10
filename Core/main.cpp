@@ -13,7 +13,7 @@ int main()
 	readUI(&m);
 	
 	char **board = create_board(n, m);
-	int ***dp = create_dp(k, n, m);
+	solution_t ***dp = create_dp(k, n, m);
 
 	for (int i = 1; i <= n; ++i)
 	{
