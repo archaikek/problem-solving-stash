@@ -1,40 +1,65 @@
 #include "structs.h"
 
-bool operator<(const solution_t &a, const solution_t &b)
+int int_max(const int a, const int b)
 {
-	return solution_max(a) < solution_max(b);
+	return (a > b ? a : b);
+}
+int solution_max(const solution_t sol, const char dir)
+{
+	switch (dir)
+	{
+	case 'L':
+		return int_max(sol.down, sol.right);
+	case 'R':
+		return int_max(sol.down, sol.left);
+	default:
+		return int_max(sol.down, int_max(sol.left, sol.right));
+	}
+}
+char get_solution_direction(const solution_t sol, const int curr_result, const char curr_dir)
+{
+	switch (curr_dir)
+	{
+	case 'L':
+		if (sol.right == curr_result) return 'L';
+		else return 'U';
+		break;
+	case 'R':
+		if (sol.left == curr_result) return 'R';
+		else return 'U';
+		break;
+	default:
+		if (sol.right == curr_result) return 'L';
+		else if (sol.left == curr_result) return 'R';
+		else return 'U';
+	}
 }
 
-int solution_max(const solution_t sol)
-{
-	return std::max(sol.down, std::max(sol.left, sol.right));
-}
-
-solution_t ***create_dp(const int k, const int n, const int m)
+solution_t ***create_dp(const int n, const int m, const int k)
 {
 	solution_t ***dp = (solution_t ***)malloc(sizeof(solution_t **) * (n + 1)); // padding on row = 0
 	for (int i = 0; i <= n; ++i)
 	{
-		helper solution_t **wall = dp[i] = (solution_t **)malloc(sizeof(solution_t *) * (k + 2)); // padding on wall = 0
-		for (int j = 0; j <= k + 1; ++j)
+		helper solution_t **row = dp[i] = (solution_t **)malloc(sizeof(solution_t *) * (m + 2)); // padding on col = 0 and col = m + 1
+		for (int j = 0; j <= m + 1; ++j)
 		{
-			helper solution_t *row = wall[j] = (solution_t *)malloc(sizeof(solution_t) * (m + 2)); // padding on column = 0 and column = m + 1
-			for (int l = 0; l <= m + 1; ++l) row[l] = { INF, INF, INF };
+			helper solution_t *col = row[j] = (solution_t *)malloc(sizeof(solution_t) * (k + 2)); // padding on wall = 0
+			for (int l = 0; l <= k + 1; ++l) col[l] = { INF, INF, INF };
 		}
 	}
 
 	return dp;
 }
-void delete_dp(solution_t ***dp, const int k, const int n, const int m)
+void delete_dp(solution_t ***dp, const int n, const int m, const int k)
 {
 	for (int i = 0; i <= n; ++i)
 	{
-		helper solution_t **wall = dp[i];
-		for (int j = 0; j <= k + 1; ++j)
+		helper solution_t **row = dp[i];
+		for (int j = 0; j <= m + 1; ++j)
 		{
-			free(wall[j]);
+			free(row[j]);
 		}
-		free(wall);
+		free(row);
 	}
 	free(dp);
 }
@@ -58,24 +83,27 @@ void delete_board(char **board, const int n, const int m)
 	free(board);
 }
 
-void print_dp(solution_t ***dp, const int k, const int n, const int m)
+void print_solution(const solution_t sol)
+{
+	if (sol.down < 0) printf("-/");
+	else printf("%d/", sol.down);
+
+	if (sol.left < 0) printf("-/");
+	else printf("%d/", sol.left);
+
+	if (sol.right < 0) printf("-\t");
+	else printf("%d\t", sol.right);
+}
+void print_dp(solution_t ***dp, const int n, const int m, const int k)
 {
 	for (int i = 0; i <= k + 1; ++i)
 	{
 		printf("wall %d:\n", i);
 		for (int j = 0; j <= n; ++j)
 		{
-			helper solution_t *row = dp[j][i];
 			for (int l = 0; l <= m + 1; ++l)
 			{
-				if (row[l].down < 0) printf("-/");
-				else printf("%d/", row[l].down);
-
-				if (row[l].left < 0) printf("-/");
-				else printf("%d/", row[l].left);
-
-				if (row[l].right < 0) printf("-\t");
-				else printf("%d\t", row[l].right);
+				print_solution(dp[j][l][i]);
 			}
 			printf("\n");
 		}
@@ -86,7 +114,7 @@ void print_board(char **board, const int n, const int m)
 {
 	for (int i = 1; i <= n; ++i)
 	{
-		writeS(board[i]);
+		writeS(board[i] + 1);
 		_putchar('\n');
 	}
 }

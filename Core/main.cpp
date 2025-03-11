@@ -13,7 +13,7 @@ int main()
 	readUI(&m);
 	
 	char **board = create_board(n, m);
-	solution_t ***dp = create_dp(k, n, m);
+	solution_t ***dp = create_dp(n, m, k);
 
 	for (int i = 1; i <= n; ++i)
 	{
@@ -21,12 +21,16 @@ int main()
 	}
 	readUI(&mode);
 
-	generate_solution(board, dp, k, n, m);
-	debug print_dp(dp, k, n, m);
+	generate_solution(board, dp, n, m, k);
+	debug print_dp(dp, n, m, k);
 
-	print_board(board, n, m);
+	int result = backtrack(board, dp, n, m, k);
 
-	delete_dp(dp, k, n, m);
+	write(result);
+	_putchar('\n');
+	if (mode == 1) print_board(board, n, m);
+
+	delete_dp(dp, n, m, k);
 	delete_board(board, n, m);
 	return 0;
 }

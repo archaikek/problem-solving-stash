@@ -1,156 +1,192 @@
 #include "dp_functions.h"
 
 static int _n, _m, _k;
-// utility
-solution_t *copy_row(solution_t *row, const int m)
-{
-	solution_t *new_row = (solution_t *)malloc(sizeof(solution_t) * (m + 2));
-	for (int i = 0; i <= m + 1; ++i) new_row[i] = row[i];
-	return new_row;
-}
-solution_t **copy_wall(solution_t **wall, const int k, const int m)
-{
-	solution_t **new_wall = (solution_t **)malloc(sizeof(solution_t) * (k + 2));
-	for (int i = 0; i <= k + 1; ++i) new_wall[i] = copy_row(wall[i], m);
-	return new_wall;
-}
 
-
-void move_down(char *line, solution_t **prev_wall, solution_t **curr_wall, const int k, const int m)
+// PROCESS DOWN
+static inline void process_dot_down(solution_t *prev_col, solution_t *curr_col, const int k)
 {
-	helper solution_t *prev_row_minus = prev_wall[0];
-	helper solution_t *curr_row_minus = curr_wall[0];
 	for (int i = 1; i <= k + 1; ++i)
 	{
-		debug _k = i;
-		helper solution_t *prev_row = prev_wall[i];
-		helper solution_t *curr_row = curr_wall[i];
-
-		for (int j = 1; j <= m; ++j)
-		{
-			debug
-			{
-				_m = j;
-			printf("%c: [%d, %d, %d] %d -> ", line[j], _n, _k, _m, curr_row[j]);
-			}
-			switch (line[j])
-			{
-			case 'S':
-				curr_row[j].down = 0;
-				break;
-			case '.':
-				curr_row[j].down = std::max(solution_max(prev_row[j]) + 1, solution_max(curr_row_minus[j]));
-				break;
-			case '@':
-				curr_row[j].down = std::max(solution_max(prev_row_minus[j]), solution_max(curr_row_minus[j]));
-				break;
-			}
-			debug printf("%d\n", curr_row[j]);
-		}
-
-		prev_row_minus = prev_row;
-		curr_row_minus = curr_row;
+		curr_col[i].down = int_max(curr_col[i - 1].down, solution_max(prev_col[i], 'U') + 1);
 	}
 }
-void move_right(char *line, solution_t **curr_wall, const int k, const int m)
+static inline void process_at_down(solution_t *prev_col, solution_t *curr_col, const int k)
 {
-	helper solution_t *curr_row_minus = curr_wall[0];
 	for (int i = 1; i <= k + 1; ++i)
 	{
-		debug _k = i;
-		helper solution_t *curr_row = curr_wall[i];
-		for (int j = 1; j <= m; ++j)
-		{
-			debug
-			{
-				_m = j;
-			printf("%c: [%d, %d, %d] %d -> ", line[j], _n, _k, _m, curr_row[j]);
-			}
-			switch (line[j])
-			{
-			case 'S':
-				curr_row[j].right = 0;
-				break;
-			case '.':
-				curr_row[j].right = std::max(solution_max(curr_row[j - 1]) + 1, solution_max(curr_row[j]));
-				break;
-			case '@':
-				curr_row[j].right = std::max(solution_max(curr_row_minus[j - 1]), solution_max(curr_row[j]));
-				break;
-			}
-			debug printf("%d\n", curr_row[j]);
-		}
-
-		curr_row_minus = curr_row;
+		curr_col[i].down = int_max(curr_col[i - 1].down, solution_max(prev_col[i - 1], 'U'));
 	}
 }
-void move_left(char *line, solution_t **curr_wall, const int k, const int m)
+static inline void process_s_down(solution_t *curr_col, const int k)
 {
-	helper solution_t *curr_row_minus = curr_wall[0];
 	for (int i = 1; i <= k + 1; ++i)
 	{
-		debug _k = i;
-		helper solution_t *curr_row = curr_wall[i];
-		for (int j = m; j >= 0; --j)
-		{
-			debug
-			{
-				_m = j;
-			printf("%c: [%d, %d, %d] %d -> ", line[j], _n, _k, _m, curr_row[j]);
-			}
-			switch (line[j])
-			{
-			case 'S':
-				curr_row[j].left = 0;
-				break;
-			case '.':
-				curr_row[j].left = std::max(solution_max(curr_row[j + 1]) + 1, solution_max(curr_row[j]));
-				break;
-			case '@':
-				curr_row[j].left = std::max(solution_max(curr_row_minus[j + 1]), solution_max(curr_row[j]));
-				break;
-			}
-			debug printf("%d\n", curr_row[j]);
-		}
-
-		curr_row_minus = curr_row;
+		curr_col[i].down = 0;
 	}
 }
 
-void process_wall(char *line, solution_t **prev_wall, solution_t **curr_wall, const int k, const int m)
+// PROCESS RIGHT
+static inline void process_dot_right(solution_t *prev_col, solution_t *curr_col, const int k)
 {
-	move_down(line, prev_wall, curr_wall, k, m);
-
-	solution_t **curr_wall_copy = copy_wall(curr_wall, k, m);
-	move_right(line, curr_wall, k, m);
-	move_left(line, curr_wall_copy, k, m);
 	for (int i = 1; i <= k + 1; ++i)
 	{
-		helper solution_t *row = curr_wall[i];
-		helper solution_t *row_copy = curr_wall_copy[i];
-		for (int j = 1; j <= m; ++j)
-		{
-			row[j] = std::max(row[j], row_copy[j]);
-		}
+		curr_col[i].right = int_max(curr_col[i - 1].right, solution_max(prev_col[i], 'L') + 1);
 	}
-
-	for (int i = 0; i <= k + 1; ++i)
-	{
-		free(curr_wall_copy[i]);
-	}
-	//free(curr_wall_copy); guh??
 }
-void generate_solution(char **board, solution_t ***dp, const int k, const int n, const int m)
+static inline void process_at_right(solution_t *prev_col, solution_t *curr_col, const int k)
 {
-	helper solution_t **prev_wall = dp[0];
+	for (int i = 1; i <= k + 1; ++i)
+	{
+		curr_col[i].right = int_max(curr_col[i - 1].right, solution_max(prev_col[i - 1], 'L'));
+	}
+}
+static inline void process_s_right(solution_t *curr_col, const int k)
+{
+	for (int i = 1; i <= k + 1; ++i)
+	{
+		curr_col[i].right = 0;
+	}
+}
+
+// PROCESS LEFT
+inline void process_dot_left(solution_t *prev_col, solution_t *curr_col, const int k)
+{
+	for (int i = 1; i <= k + 1; ++i)
+	{
+		curr_col[i].left = int_max(curr_col[i - 1].left, solution_max(prev_col[i], 'R') + 1);
+	}
+}
+inline void process_at_left(solution_t *prev_col, solution_t *curr_col, const int k)
+{
+	for (int i = 1; i <= k + 1; ++i)
+	{
+		curr_col[i].left = int_max(curr_col[i - 1].left, solution_max(prev_col[i - 1], 'R'));
+	}
+}
+inline void process_s_left(solution_t *curr_col, const int k)
+{
+	for (int i = 1; i <= k + 1; ++i)
+	{
+		curr_col[i].left = 0;
+	}
+}
+
+
+void generate_solution(char **board, solution_t ***dp, const int n, const int m, const int k)
+{
 	for (int i = 1; i <= n; ++i)
 	{
-		debug _n = i;
-		helper solution_t **curr_wall = dp[i];
-		helper char *line = board[i];
-		debug printf("??? %s\n", line);
-		process_wall(line, prev_wall, curr_wall, k, m);
+		helper solution_t **prev_row = dp[i - 1];
+		helper solution_t **curr_row = dp[i];
 
-		prev_wall = curr_wall;
+		// move down
+		for (int j = 1; j <= m; ++j)
+		{
+			helper solution_t *prev_col = prev_row[j];
+			helper solution_t *curr_col = curr_row[j];
+			switch (board[i][j])
+			{
+			case '.':
+				process_dot_down(prev_col, curr_col, k);
+				break;
+			case '@':
+				process_at_down(prev_col, curr_col, k);
+				break;
+			case 'S':
+				process_s_down(curr_col, k);
+				break;
+			}
+		}
+
+		// move right
+		for (int j = 1; j <= m; ++j)
+		{
+			helper solution_t *prev_col = curr_row[j - 1];
+			helper solution_t *curr_col = curr_row[j];
+			switch (board[i][j])
+			{
+			case '.':
+				process_dot_right(prev_col, curr_col, k);
+				break;
+			case '@':
+				process_at_right(prev_col, curr_col, k);
+				break;
+			case 'S':
+				process_s_right(curr_col, k);
+				break;
+			}
+		}
+
+		// move left
+		for (int j = m; j >= 0; --j)
+		{
+			helper solution_t *prev_col = curr_row[j + 1];
+			helper solution_t *curr_col = curr_row[j];
+			switch (board[i][j])
+			{
+			case '.':
+				process_dot_left(prev_col, curr_col, k);
+				break;
+			case '@':
+				process_at_left(prev_col, curr_col, k);
+				break;
+			case 'S':
+				process_s_left(curr_col, k);
+				break;
+			}
+		}
 	}
+}
+
+int backtrack(char **board, solution_t ***dp, const int n, const int m, const int k)
+{
+	int _n, _m, _k = k + 1, curr_result = -1;
+	// find the location of the best result
+	for (int i = 1; i <= n; ++i)
+	{
+		helper solution_t **row = dp[i];
+		for (int j = 1; j <= m; ++j)
+		{
+			helper int result = solution_max(row[j][_k], 'U');
+			if (result > curr_result)
+			{
+				curr_result = result;
+				_n = i;
+				_m = j;
+			}
+		}
+	}
+	int result = curr_result;
+
+	char dir = 'U';
+	while (board[_n][_m] != 'S')
+	{
+		dir = get_solution_direction(dp[_n][_m][_k], curr_result, dir);
+
+		debug
+		{
+			solution_t sol = dp[_n][_m][_k];
+			printf("%c: [%d, %d, %d] -> ", dir, _n, _m, _k);
+			print_solution(sol);
+			_putchar('\n');
+		}
+		
+		if (board[_n][_m] == '.') --curr_result;
+		else --_k;
+		board[_n][_m] = dir;
+
+		switch (dir)
+		{
+		case 'L':
+			--_m;
+			break;
+		case 'R':
+			++_m;
+			break;
+		case 'U':
+			--_n;
+			break;
+		}
+	}
+	return result;
 }
