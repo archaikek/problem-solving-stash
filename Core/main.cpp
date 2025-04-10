@@ -1,6 +1,3 @@
-#include "common_defines.h"
-#include "fast_io.h"
-
 #define _CRT_SECURE_NO_WARNINGS
 #define ff first
 #define ss second
@@ -25,6 +22,9 @@ typedef short int SH;
 #define _getchar getchar
 #define _putchar putchar
 #endif
+
+#include <cstdio>
+#include <iostream>
 
 void readI(int *i)
 {
@@ -144,6 +144,11 @@ void writeS(const char *s)
 
 int main()
 {
+#ifdef UNSAFE_IO
+	std::cin.tie(0);
+	std::cout.tie(0);
+	std::ios_base::sync_with_stdio(0);
+#endif
 
 	return 0;
 }
