@@ -8,3 +8,5 @@
 typedef long long int LL;
 typedef long double LD;
 typedef short int SH;
+
+using namespace std;
