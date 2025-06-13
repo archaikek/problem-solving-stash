@@ -5,7 +5,7 @@
 
 #include <cstdlib>
 
-int main()
+int main(int argc, char **argv)
 {
 	int n, m, k, mode;
 	readUI(&k);
@@ -18,6 +18,13 @@ int main()
 	for (int i = 1; i <= n; ++i)
 	{
 		readS(board[i] + 1);
+	}
+	if (argc > 1 && strcmp(argv[1], "-brute") == 0) // run brute_force instead
+	{
+		run_brute_force(board, n, m, k);
+		delete_dp(dp, n, m, k);
+		delete_board(board, n, m);
+		return 0;
 	}
 	readUI(&mode);
 

@@ -1,10 +1,16 @@
-#include "dp_functions.h"
+﻿#include "dp_functions.h"
 
 static int _n, _m, _k;
 
 // PROCESS DOWN
 static inline void process_dot_down(solution_t *prev_col, solution_t *curr_col, const int k)
 {
+	/* 
+	Rozwiązania indeksowane <0; k+1>; i oznacza, że do uzyskania tego rozwiązania wykorzystano
+	__ściśle mniej__ niż i pzrebitych ścian (tj. i=1 oznacza brak przebitych ścian, i=5 oznacza
+	najlepszy wynik z wykorzystaniem od 0 do 4 przebitych ścian). 0 jest zarezerwowane dla
+	niepoprawnych wyników.
+	*/
 	for (int i = 1; i <= k + 1; ++i)
 	{
 		curr_col[i].down = int_max(curr_col[i - 1].down, solution_max(prev_col[i], 'U') + 1);
@@ -71,14 +77,27 @@ inline void process_s_left(solution_t *curr_col, const int k)
 	}
 }
 
+/*
+Rozwiązanie z użyciem programowania dynamicznego w złożoności O(NMK), gdzie N - liczba wierszy, M - liczba
+kolumn, K - największa możliwa liczba skał do przebicia.
 
+Korzystając z faktu, że po planszy można się poruszać jedynie w dół i na boki, optymalny wynik z wcześniejsych
+wierszy można bez strat przenieść do kolejnych pod warunkiem, że będziemy utrzymywać po drodze informację
+o wykorzystanych dotychczas przebitych ścianach (co jest załatwiane dodatkowym wymiarem w tablicy DP). Ponadto
+w obrębie wiersza zabraniamy cofania się, stąd możemy przetworzyć wiersz od lewej do prawej niezależnie
+od przetworzenia go od prawej do lewej, korzystając jedynie z wyników cząstkowych bazujących na wynikach
+z poprzedniego wiersza (ruch w dół) oraz z poprzednich kolumn zgodnie z kierunkiem przetwarzania (ruchy w lewo
+oraz w prawo).
+*/
 void generate_solution(char **board, solution_t ***dp, const int n, const int m, const int k)
 {
+	/* wiersze planszy indeksowane <0; n>; 0 jest zarezerwowane dla niepoprawnych wyników */
 	for (int i = 1; i <= n; ++i)
 	{
 		helper solution_t **prev_row = dp[i - 1];
 		helper solution_t **curr_row = dp[i];
 
+		/* kolumny planszy indeksowane <0; m+1>; 0 i m+1 zarezerwowane dla niepoprawnych wyników */
 		// move down
 		for (int j = 1; j <= m; ++j)
 		{
@@ -138,6 +157,10 @@ void generate_solution(char **board, solution_t ***dp, const int n, const int m,
 	}
 }
 
+/*
+Funkcja ta służy do odtworzenia trasy generującej znalezionej przez powyższy algorytm programowania dynamicznego
+wyniku.
+*/
 int backtrack(char **board, solution_t ***dp, const int n, const int m, const int k)
 {
 	int _n, _m, _k = k + 1, curr_result = -1;
@@ -189,4 +212,52 @@ int backtrack(char **board, solution_t ***dp, const int n, const int m, const in
 		}
 	}
 	return result;
+}
+
+
+static bool visited[107][107];
+static int result = 0, local_result = 0, walls_hit = -1;
+static int walls_lim;
+
+static char **board;
+static int n, m, k;
+
+static void dfs(const int row, const int col)
+{
+	if (walls_hit > walls_lim) return;
+	visited[row][col] = true;
+	if (board[row][col] == '.') ++local_result;
+	else ++walls_hit;
+	//printf("? checking (%d, %d) standing on %c; local_result = %d, result = %d; walls hit: %d/%d\n", row, col, board[row][col], local_result, result, walls_hit, walls_lim);
+
+	result = std::max(result, local_result);
+	if (local_result > result) return;
+	if (!visited[row][col - 1]) dfs(row, col - 1);
+	if (!visited[row][col + 1]) dfs(row, col + 1);
+	if (row < n) dfs(row + 1, col);
+
+	if (board[row][col] == '.') --local_result;
+	else --walls_hit;
+	visited[row][col] = false;
+	//printf("exiting (%d %d)\n", row, col);
+}
+void run_brute_force(char **__board, const int __n, const int __m, const int __k)
+{
+	n = __n;
+	m = __m;
+	k = __k;
+	board = __board;
+	int start = 1;
+	for (int i = 0; i <= n; ++i)
+	{
+		for (int j = 0; j <= m; ++j)
+		{
+			visited[i][j] = false;
+		}
+	}
+	for (int j = 1; j <= m; ++j) if (board[1][j] == 'S') start = j;
+	walls_lim = k;
+
+	dfs(1, start);
+	printf("%d\n", result);
 }
