@@ -34,8 +34,8 @@ int main(int argc, char **argv)
 		}
 		sort(lengths, lengths + m);
 
-		if (true)
-		//if (argc > 1 && strcmp(argv[1], "-brute") == 0)
+		//if (true)
+		if (argc > 1 && strcmp(argv[1], "-brute") == 0)
 		{
 			int *solution = (int *)malloc(k * sizeof(int));
 			brute_force(n, k, x, y, solution);
@@ -49,18 +49,24 @@ int main(int argc, char **argv)
 
 			free(solution);
 		}
+		else if (n <= 2)
+		{
+			printf("case %d Y\n0 \n", t + 1);
+		}
 		else
 		{
 			int left = 0, right = m; // right - first outside the table
 			int *solution = (int *)malloc(k * sizeof(int));
 			int *temp_solution = (int *)malloc(n * sizeof(int));
-			while (left + 1 < right)
+			while (true)
 			{
 				int mid = (left + right) / 2; // mid - first outside the left half <==> first in the right half
 				graph_t *squared = create_squared_graph(graph, lengths, mid);
 
 				int result = find_independent_set(squared, temp_solution);
 				delete_graph(squared);
+
+				debug printf("??? (%d, %d) -> %d\n", left, right, result);
 
 				if (result <= k) // solution found, look for something smaller
 				{
@@ -74,10 +80,12 @@ int main(int argc, char **argv)
 							++offset;
 						}
 					}
+					if (left == right - 1) break;
 					right = mid;
 				}
 				else // solution not found, look for something bigger
 				{
+					if (left == right - 1) break;
 					left = mid;
 				}
 			}

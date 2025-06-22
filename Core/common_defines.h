@@ -8,7 +8,7 @@
 #define di std::pair<double, int>
 #define dd std::pair<double, double>
 #define SQ(x) (x) * (x)
-#define debug if(0)
+#define debug if (0)
 
 #define helper
 
