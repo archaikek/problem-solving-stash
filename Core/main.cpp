@@ -1,4 +1,4 @@
-#include "common_defines.h"
+﻿#include "common_defines.h"
 #include "fast_io.h"
 #include "structs.h"
 
@@ -22,6 +22,11 @@ int main(int argc, char **argv)
 		ii *lengths = (ii *)malloc(((n * (n - 1)) / 2) * sizeof(ii));
 		graph_t *graph = create_graph(n);
 
+		/*
+		Zauważmy, że odległością między najdalszymi dwoma punktami w dowolnym rozwiązaniu jest krawędź między nimi;
+		będziemy chcieli uporzadkować te krawędzie od najkrótszej do najdłuższej i spróbować znaleźć tę, która
+		faktycznie będzie tą najdłuższą wyznaczajacą jakość rozwiązania.
+		*/
 		for (int i = 0; i < n; ++i)
 		{
 			readI(x + i);
@@ -55,11 +60,39 @@ int main(int argc, char **argv)
 		}
 		else
 		{
+			/*
+			Zastosujemy bisekcję w celu znalezienia poszukiwanej krawędzi - jest ich O(n^2), stąd badanie rozwiązania
+			będziemy wykonywali O(log^2 n) razy. 
+			Samo poszukiwanie będzie przebiegało w następujący sposób: po wybraniu krawędzi odrzucimy wszystkie
+			krawędzie większe od niej, i w tak pomniejszonym grafie będziemy chcieli znaleźć zbiór dominujący
+			o rozmiarze co najwyżej k - jeśli taki znajdziemy, to z definicji będzie on sąsiadował z każdym innym
+			wierzchołkiem w grafie, a te z konstrukcji grafu będą w odległości nie większej niż badana krawędź.
+			*/
 			int left = 0, right = m; // right - first outside the table
 			int *solution = (int *)malloc(k * sizeof(int));
 			int *temp_solution = (int *)malloc(n * sizeof(int));
 			while (true)
 			{
+				/*
+				Pomysł: Stwórzmy "kwadrat" grafu, czyli graf z tymi samymi wierzchołkami, ale do zbioru sąsiadów
+				każdego wierzchołka v dodamy również sąsiadów sąsiadów v. Wówczas zbiór sąsiadów v w wyjściowym
+				grafie będzie tworzył klikę w kwadracie tego grafu.
+				Teraz zauważmy, że mając pewien zbiór dominujacy o rozmiarze d w wyjściowym grafie, kwadrat grafu
+				będziemy mogli pokryć d klikami (ponieważ zbiór sąsiadów każdego z tych d wierzchołków tworzy własną
+				klikę). Oznacza to, że w dowolnym zbiorze niezależnym w kwadracie grafu z każdej takiej kliki 
+				znajdzie się co najwyżej 1 wierzchołek. Stąd obserwacja, że dowolny zbiór niezależny 
+				w kwadracie	grafu będzie niewiększy od dowolnego zbioru dominującego w wyjściowym grafie.
+				Ponadto dowolny maksymalny zbiór niezależny sam w sobie jest zbiorem dominującym tego grafu.
+				Łącząc te obserwacje otrzymujemy, że dowolny maksymalny zbiór niezależny w kwadracie grafu
+				stworzy nam pewne rozwiązanie w grafie wyjściowym o tym samym rozmiarze. W kwadracie grafu
+				jest to zbiór dominujący, a tym samym w wyjściowym grafie każdy wierzchołek będzie od tego zbioru
+				oddalony o co najwyżej dwie krawędzie. Z konstrukcji grafu wiemy, jakiej długości jest najdłuższa
+				jego krawędź, stąd według tego rozwiązania, korzystając z nierówności trójkąta, faktyczne rozwiązanie
+				będzie co najwyżej dwukrotnie gorsze. Ponieważ każdy zbiór niezależny w kwadracie grafu jest
+				niewiększy od każdego zbioru dominującego w grafie wyjściowym, na pewno nie istnieje zbiór dominujący
+				rozmiaru co najwyżej k w grafie, w którego kwadracie nie jesteśmy w stanie skonstruować maksymalnego
+				zbioru niezależnego o rozmiarze co najwyżej k, qed.
+				*/
 				int mid = (left + right) / 2; // mid - first outside the left half <==> first in the right half
 				graph_t *squared = create_squared_graph(graph, lengths, mid);
 
@@ -107,6 +140,11 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+/*
+Zgodnie z twierdzeniem, każdy maksymalny zbiór niezależny w grafie jest również zbiorem dominującym. Możemy go zatem
+wyszukać w sposób zachłanny - wybieramy kolejne wierzchołki v i patrzymy, czy żaden z sąsiadów v nie znajduje się
+już w naszym zbiorze niezależnym. Jeśli nie, to dodajemy v do zbioru niezależnego.
+*/
 int find_independent_set(const graph_t *graph, int *solution)
 {
 	const int n = graph->size;
