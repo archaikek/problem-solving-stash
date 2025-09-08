@@ -26,6 +26,25 @@ typedef short int SH;
 #include <cstdio>
 #include <iostream>
 
+void readI(int *i);
+void readUI(int *i);
+void readLL(long long int *l);
+void readULL(long long int *l);
+void readS(char *s);
+void write(long long int l);
+void writeS(const char *s);
+
+int main()
+{
+#ifdef UNSAFE_IO
+	std::cin.tie(0);
+	std::cout.tie(0);
+	std::ios_base::sync_with_stdio(0);
+#endif
+
+	return 0;
+}
+
 void readI(int *i)
 {
 	register int r = 0;
@@ -140,15 +159,4 @@ void writeS(const char *s)
 		_putchar(*end);
 		++end;
 	}
-}
-
-int main()
-{
-#ifdef UNSAFE_IO
-	std::cin.tie(0);
-	std::cout.tie(0);
-	std::ios_base::sync_with_stdio(0);
-#endif
-
-	return 0;
 }
