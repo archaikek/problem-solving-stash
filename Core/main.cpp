@@ -24,7 +24,13 @@ typedef short int SH;
 #endif
 
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
 
 void readI(int *i);
 void readUI(int *i);
@@ -34,6 +40,49 @@ void readS(char *s);
 void write(long long int l);
 void writeS(const char *s);
 
+int n, m, lowpoint[10007], depth[10007], visited[10007], result, run_count;
+vector<int> neighbours[10007];
+
+inline void connect(const int u, const int v, const int cap)
+{
+	neighbours[u].eb(v);
+	neighbours[v].eb(u);
+}
+
+void get_articulation_points(const int node, const int parent, const int dep)
+{
+	visited[node] = run_count;
+	lowpoint[node] = depth[node] = dep;
+	int child_count = 0;
+	bool is_articulation_point = false;
+
+	const int size = neighbours[node].size();
+	for (int i = 0; i < size; ++i)
+	{
+		const int neighbour = neighbours[node][i];
+		if (visited[neighbour] < run_count)
+		{
+			get_articulation_points(neighbour, node, dep + 1);
+			++child_count;
+			is_articulation_point = (lowpoint[neighbour] >= dep);
+			lowpoint[node] = min(lowpoint[node], lowpoint[neighbour]);
+		}
+		else if (neighbour != parent)
+		{
+			lowpoint[node] = min(lowpoint[node], depth[neighbour]);
+		}
+	}
+	if ((parent >= 0 && is_articulation_point) || (parent < 0 && child_count > 1)) ++result;
+}
+void find_aritculation_points()
+{
+	++run_count;
+	for (int i = 1; i <= n; ++i)
+	{
+		if (visited[i] < run_count) get_articulation_points(i, -1, 0);
+	}
+}
+
 int main()
 {
 #ifdef UNSAFE_IO
@@ -41,9 +90,50 @@ int main()
 	std::cout.tie(0);
 	std::ios_base::sync_with_stdio(0);
 #endif
+infloop:
+	readUI(&n);
+	readUI(&m);
+	if (n == 0) goto endloop;
+	
+	for (int i = 0; i <= n; ++i)
+	{
+		neighbours[i].clear();
+	}
+	for (int i = 0; i < m; ++i)
+	{
+		int u, v;
+		readUI(&u);
+		readUI(&v);
+		connect(u, v, 1);
+	}
+
+	result = 0;
+	find_aritculation_points();
+	write(result);
+	writeS("\n");
+
+goto infloop;
+endloop:
 
 	return 0;
 }
+
+/*
+3 3
+1 2
+2 3
+1 3
+6 8
+1 3
+6 1
+6 3
+4 1
+6 4
+5 2
+3 2
+3 5
+0 0
+*/
 
 void readI(int *i)
 {
