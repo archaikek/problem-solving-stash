@@ -3,6 +3,7 @@
 #define ss second
 #define eb emplace_back
 #define debug if(0)
+#define MAXN 10007
 
 typedef long long int LL;
 typedef long double LD;
@@ -40,10 +41,10 @@ void readS(char *s);
 void write(long long int l);
 void writeS(const char *s);
 
-int n, m, lowpoint[10007], depth[10007], visited[10007], result, run_count;
-vector<int> neighbours[10007];
+int n, m, lowpoint[MAXN], depth[MAXN], visited[MAXN], result, run_count;
+vector<int> neighbours[MAXN];
 
-inline void connect(const int u, const int v, const int cap)
+inline void connect(const int u, const int v)
 {
 	neighbours[u].eb(v);
 	neighbours[v].eb(u);
@@ -64,7 +65,7 @@ void get_articulation_points(const int node, const int parent, const int dep)
 		{
 			get_articulation_points(neighbour, node, dep + 1);
 			++child_count;
-			is_articulation_point = (lowpoint[neighbour] >= dep);
+			if (lowpoint[neighbour] >= dep) is_articulation_point = true;
 			lowpoint[node] = min(lowpoint[node], lowpoint[neighbour]);
 		}
 		else if (neighbour != parent)
@@ -73,14 +74,6 @@ void get_articulation_points(const int node, const int parent, const int dep)
 		}
 	}
 	if ((parent >= 0 && is_articulation_point) || (parent < 0 && child_count > 1)) ++result;
-}
-void find_aritculation_points()
-{
-	++run_count;
-	for (int i = 1; i <= n; ++i)
-	{
-		if (visited[i] < run_count) get_articulation_points(i, -1, 0);
-	}
 }
 
 int main()
@@ -93,7 +86,7 @@ int main()
 infloop:
 	readUI(&n);
 	readUI(&m);
-	if (n == 0) goto endloop;
+	if (n == 0 && m == 0) goto endloop;
 	
 	for (int i = 0; i <= n; ++i)
 	{
@@ -104,15 +97,16 @@ infloop:
 		int u, v;
 		readUI(&u);
 		readUI(&v);
-		connect(u, v, 1);
+		connect(u, v);
 	}
 
 	result = 0;
-	find_aritculation_points();
+	++run_count;
+	get_articulation_points(1, -1, 0);
 	write(result);
 	writeS("\n");
-
 goto infloop;
+
 endloop:
 
 	return 0;

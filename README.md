@@ -3,7 +3,8 @@ Repository for codes for competitive programming problem solving and similar.
 
 Different branches contain solutions for different problems, which will be linked in their respective readmes. 
 
-## master
-This branch contains common functions and macros for competitive programming.
+## spoj-ms2025-submerge
+Solution for the problem 'Submerging Islands' from https://www.spoj.com/MS2025/problems/SUBMERGE/. The contest will most likely be unavailable to outsiders.
 
-Many contests require (or at least highly encourage) writing the entire code in a single file, so this makes for a nice base for those (so that I don't have to make that move myself for every exercise).
+### Solution
+Use Tarjan's algorithm to find articulation points in graph and count them.
