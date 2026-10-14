@@ -41,7 +41,25 @@ int main()
 	std::cout.tie(0);
 	std::ios_base::sync_with_stdio(0);
 #endif
+	int t;
+	readUI(&t);
+	while (t--)
+	{
+		int a, b;
+		readUI(&a);
+		readUI(&b);
 
+		if (b >= a)
+		{
+			write(-1);
+			putchar('\n');
+		}
+		else
+		{
+			write(std::min(b, a - b));
+			putchar('\n');
+		}
+	}
 	return 0;
 }
 
