@@ -33,6 +33,7 @@ void readULL(long long int *l);
 void readS(char *s);
 void write(long long int l);
 void writeS(const char *s);
+/* USER CODE GOES HERE */
 
 int main()
 {
@@ -45,6 +46,7 @@ int main()
 	return 0;
 }
 
+/* END OF USER CODE */
 void readI(int *i)
 {
 	register int r = 0;
