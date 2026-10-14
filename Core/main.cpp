@@ -73,7 +73,7 @@ int main()
 		}
 		debug printf("\n");
 
-		int result = 0;
+		LL result = 0;
 		for (int i = 0; i < k; ++i)
 		{
 			pos[i].eb(INF);
