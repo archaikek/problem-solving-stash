@@ -2,7 +2,7 @@
 #define ff first
 #define ss second
 #define eb emplace_back
-#define debug if(0)
+#define debug if(1)
 
 typedef long long int LL;
 typedef long double LD;
@@ -42,7 +42,40 @@ int main()
 	std::cout.tie(0);
 	std::ios_base::sync_with_stdio(0);
 #endif
+	int t;
+	readUI(&t);
+	while (t--)
+	{
+		char c, prev;
+		int length;
+		bool l1 = false, l3 = false;
 
+		prev = getchar(); // solves the edge case where two first chars being different is falsely flagged as a length 1 substring to merge
+		c = getchar();
+		length = (c == prev ? 2 : 1);
+		prev = c;
+
+		while ((c = getchar()) != '\n')
+		{
+			if (c != prev)
+			{
+				if (length == 1)
+					l1 = true;
+				else if (length >= 3)
+					l3 = true;
+				length = 1;
+			}
+			else
+				++length;
+
+			prev = c;
+		}
+		if (length >= 3) // solves the edge case where the only length 3+ substring is the suffix of the string, which wouldn't be flagged to split
+			l3 = true;
+
+		write(1 + l1 + l3);
+		putchar('\n');
+	}
 	return 0;
 }
 
