@@ -42,7 +42,36 @@ int main()
 	std::cout.tie(0);
 	std::ios_base::sync_with_stdio(0);
 #endif
+	int t;
+	readUI(&t);
+	while (t--)
+	{
+		char c, prev;
+		int length = 1;
+		bool l1 = false, l3 = false;
 
+		prev = getchar();
+		while ((c = getchar()) != '\n')
+		{
+			if (c != prev)
+			{
+				if (length == 1)
+					l1 = true;
+				else if (length >= 3)
+					l3 = true;
+				length = 1;
+			}
+			else
+				++length;
+
+			prev = c;
+		}
+		if (length >= 3)
+			l3 = true;
+
+		write(1 + l1 + l3);
+		putchar('\n');
+	}
 	return 0;
 }
 
